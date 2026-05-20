@@ -1,74 +1,76 @@
 <?php
     class dapur {
-        private $conn;
+        private $koneksi;
         private $table = "dapur";
 
         public function __construct($db) {
-            $this->conn = $db;
+            $this->koneksi = $db;
         }
 
         // Untuk mengambil semua data dapur
         public function getAll() {
-            $query = "SELECT " . $this->table . ".*, mitra.nama_mitra FROM " . $this->table . 
-                    " LEFT JOIN mitra ON " . $this->table . 
-                        ".id_mitra = mitra.id_mitra WHERE " . $this->table . 
-                    ".id_dapur = ?";
+            $query = "SELECT dapur.*, mitra.nama_mitra
+                    FROM dapur
+                    LEFT JOIN mitra ON dapur.id_mitra = mitra.id_mitra
+                    ORDER BY dapur.id_dapur DESC";
 
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-
-            return $stmt->get_result();
+            return mysqli_query($this->koneksi, $query);
         }
-        // Untuk mengambil satu data dapur dan data mitra | ? untuk placeholder
+
         public function getById($id) {
-            $query = "SELECT " . $this->table . ".*, mitra.nama_mitra FROM " . $this->table . 
-                    " LEFT JOIN mitra ON " . $this->table . 
-                        ".id_mitra = mitra.id_mitra WHERE " . $this->table . 
-                    ".id_dapur = ?";
+            $query = "SELECT dapur.*, mitra.nama_mitra
+                    FROM dapur
+                    LEFT JOIN mitra ON dapur.id_mitra = mitra.id_mitra
+                    WHERE dapur.id_dapur = '$id'";
 
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
+            $res = mysqli_query($this->koneksi, $query);
+            return mysqli_fetch_assoc($res);
+        }
 
-            $res = $stmt->get_result();
-            return $res->fetch_assoc();
-            }
+        // FUNGSI CREATE
+        public function tambahDapur($data){
+            $nama_dapur = $data['nama_dapur'];
+            $alamat = $data['alamat'];
+            $penanggung_jawab = $data['penanggung_jawab'];
+            $kontak = $data['kontak'];
+            $id_mitra = $data['id_mitra'];
+
+            mysqli_query($this->koneksi, "
+                INSERT INTO dapur
+                (nama_dapur, alamat, penanggung_jawab, kontak, id_mitra)
+                VALUES
+                ('$nama_dapur', '$alamat', '$penanggung_jawab', '$kontak', '$id_mitra')
+            ");
+        }
+
+        // FUNGSI READ
+        public function tampilDapur (){
+            return mysqli_query($this->koneksi, "
+            SELECT dapur.*, mitra.nama_mitra
+            FROM dapur            
+            LEFT JOIN MITRA
+            ON dapur.id_mitra = mitra.id_mitra
+            ");
+        }
 
         // FUNGSI UPDATE
         public function update($id_dapur, $nama_dapur, $alamat, $penanggung_jawab, $kontak, $id_mitra) {
             $query = "UPDATE " . $this->table ."
-                        SET nama_dapur = ?, 
-                        alamat = ?, 
-                        penanggung_jawab = ?,
-                        kontak = ?,
-                        id_mitra = ?
-                        WHERE id_dapur = ?";
+                        SET nama_dapur = '$nama_dapur', 
+                        alamat = '$alamat, 
+                        penanggung_jawab = '$penanggung_jawab',
+                        kontak = '$kontak',
+                        id_mitra = '$id_mitra'
+                        WHERE id_dapur = '$id_dapur'";
 
-            $stmt = $this->conn->prepare($query);
-
-            // Ikat Parameter
-            $stmt->bind_param("sssiii", $nama_dapur, $alamat, $penanggung_jawab, $kontak, $id_mitra, $id_dapur);
-            // Eksekusi Query
-            if ($stmt->execute()) {
-                return true;
-            } else {
-                return false;
-            }
+            return mysqli_query($this->koneksi, $query);
         }
 
         // FUNGSI DELETE
         public function delete($id) {
-            $query = "DELETE FROM " . $this->table . " WHERE id_dapur =?";
-            
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param("i", $id);
+            $query = "DELETE FROM " . $this->table . " WHERE id_dapur = '$id'";
 
-            if ($stmt->execute()) {
-                return true;
-            } else {
-                return false;
-            }
+            return mysqli_query($this->koneksi, $query);
         }
     }
 ?>

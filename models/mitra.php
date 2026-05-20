@@ -1,21 +1,16 @@
 <?php
     class mitra {
-        private $conn;
+        private $koneksi;
         private $table = "mitra";
 
         public function __construct($db) {
-            $this->conn = $db;
+            $this->koneksi = $db;
         }
 
-        public function getAll() {
+        public function tampilMitra() {
             $query = "SELECT id_mitra, nama_mitra FROM " . $this->table . " ORDER BY nama_mitra ASC";
 
-            // Ikat Parameter
-            $stmt = $this->conn->prepare($query);
-            // Eksekusi Query
-            $stmt->execute();
-
-            return $stmt->get_result();
+            return mysqli_query($this->koneksi, $query);
         }
-    }
+    }   
 ?>
