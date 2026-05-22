@@ -57,7 +57,6 @@ username VARCHAR(50) UNIQUE,
 password VARCHAR(255),
 role ENUM(
 'admin',
-
 'petugas',
 'dapur',
 'sekolah'
