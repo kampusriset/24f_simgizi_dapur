@@ -1,7 +1,6 @@
 # 24f_simgizi_dapur
 
 # Struktur Database
-<h1>STRUKTUR DATABASE</h1>
 
 ```bash
 -- CREATE DATABASE
