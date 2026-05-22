@@ -1,0 +1,45 @@
+<?php
+    class user {
+        private $koneksi;
+
+        public function __construct($db) {
+            $this->koneksi=$db;
+        }
+
+        // FUNGSI REGISTER
+        public function register($nama, $username, $password, $role) {
+            $cek = $this->koneksi->query (
+                "SELECT id_user FROM users 
+                WHERE username = '$username'"
+            );
+
+            if ($cek->num_rows > 0) {
+                return false;
+            }
+
+            $password = password_hash($password, PASSWORD_DEFAULT);
+
+            return $this->koneksi->query(
+                "INSERT INTO users(nama, username, password, role)
+                VALUES ('$nama', '$username', '$password', '$role')"
+            );
+        }
+
+        // FUNGSI LOGIN
+        public function login($username, $password) {
+            $res = $this->koneksi->query (
+                "SELECT * FROM users
+                WHERE username = '$username'"
+            );
+
+            if ($res->num_rows > 0) {
+                $user = $res->fetch_assoc();
+
+                if (password_verify($password, $user['password'])) {
+                    return $user;
+                }
+            }
+            return false;
+        }
+    }
+?>
