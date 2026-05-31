@@ -1,23 +1,24 @@
 <?php
-    require_once '../config/database.php';
-    require_once '../models/dapur.php';
+session_start();
 
-    $db = (new Database())->connect();
-    $dapur = new Dapur($db);
-
-    $id = $_GET['id'] ?? null;
-
-    if ($id) {
-        if ($dapur->delete($id)) {
-            // Jika terhapus, nanti akan kembali ke halaman read
-            heaeder("Location: read.php?status=success_deleted");
-        } else {
-            // Jika gagal
-            header("Location: read.php");
-        }
-    } else {
-        // Jika file diakses tanpa ID, otomatis balik ke halaman read
-        header("Location: read.php");
-    }
+if(!isset($_SESSION['login'])){
+    header("Location: ../auth/login.php");
     exit;
+}
+
+require_once '../config/database.php';
+require_once '../models/dapur.php';
+
+$db = (new Database())->connect();
+$dapur = new Dapur($db);
+
+$id = $_GET['id'] ?? null;
+
+if ($id) {
+    $dapur->delete($id);
+    header("Location: read.php?status=success_deleted");
+} else {
+    header("Location: read.php");
+}
+exit;
 ?>

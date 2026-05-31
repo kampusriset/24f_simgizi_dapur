@@ -57,7 +57,7 @@
         public function update($id_dapur, $nama_dapur, $alamat, $penanggung_jawab, $kontak, $id_mitra) {
             $query = "UPDATE " . $this->table ."
                         SET nama_dapur = '$nama_dapur', 
-                        alamat = '$alamat, 
+                        alamat = '$alamat', 
                         penanggung_jawab = '$penanggung_jawab',
                         kontak = '$kontak',
                         id_mitra = '$id_mitra'

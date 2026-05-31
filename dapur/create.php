@@ -1,15 +1,23 @@
 <?php
-    require_once '../config/database.php';
-    include '../models/dapur.php';
-    include '../models/mitra.php';
+session_start();
 
-    $db = (new Database())->connect();
-    $dapur = new Dapur($db);
-    $mitra = new Mitra($db);
+if(!isset($_SESSION['login'])){
+    header("Location: ../auth/login.php");
+    exit;
+}
 
-    $dataMitra = $mitra->tampilMitra();
-    if(isset($_POST['submit'])){
-        $dapur->tambahDapur($_POST);
-        header("Location: read.php");
-    }
+require_once '../config/database.php';
+include '../models/dapur.php';
+
+$db = (new Database())->connect();
+$dapur = new Dapur($db);
+
+if(isset($_POST['submit'])){
+    $dapur->tambahDapur($_POST);
+    header("Location: read.php");
+    exit;
+} else {
+    header("Location: read.php");
+    exit;
+}
 ?>

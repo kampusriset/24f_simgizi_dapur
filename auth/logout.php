@@ -1,13 +1,13 @@
 <?php
-session_start();
+    session_start();
 
-// hapus semua session login
-$_SESSION = array();
+    // hapus semua session login
+    $_SESSION = array();
 
-// destroy session
-session_destroy();
+    // destroy session
+    session_destroy();
 
-// redirect ke login
-header("Location: ../login.php");
-exit();
+    // redirect ke login
+    header("Location: ../login.php");
+    exit();
 ?>
