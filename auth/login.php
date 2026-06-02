@@ -77,7 +77,6 @@
             <button class="btn btn-success w-100" name="login">
                 Login
             </button>
-
         </form>
 
         <a href="register.php" class="text-center mt-3 d-block">
