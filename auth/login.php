@@ -22,7 +22,7 @@
 
             $_SESSION['Success Login'] = True;
     
-            header("Location: ../dashboard.php");
+            header("Location: ../templates/dashboard.php");
             exit;
         } else {
             $error_login = True;

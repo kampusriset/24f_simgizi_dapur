@@ -1,42 +1,41 @@
 <?php
-session_start();
+    session_start();
 
-if(!isset($_SESSION['username'])){
-    header("Location: ../auth/login.php");
-    exit;
-}
+    if(!isset($_SESSION['username'])){
+        header("Location: ../auth/login.php");
+        exit;
+    }
 
-require_once '../config/database.php';
-require_once '../models/dapur.php';
-require_once '../models/mitra.php';
+    require_once '../config/database.php';
+    require_once '../models/dapur.php';
+    require_once '../models/mitra.php';
 
-$db = (new Database())->connect();
-$dapur = new Dapur($db);
-$mitra = new Mitra($db);
+    $db = (new Database())->connect();
+    $dapur = new Dapur($db);
+    $mitra = new Mitra($db);
 
-$id = $_GET['id'] ?? null;
-if(!$id) {
-    header("Location: read.php");
-    exit;
-}
+    $id = $_GET['id'] ?? null;
+    if(!$id) {
+        header("Location: read.php");
+        exit;
+    }
 
-$dl = $dapur->getById($id);
-$queryMitra = $mitra->getAll();
+    $dl = $dapur->getById($id);
+    $queryMitra = $mitra->getAll();
 
-if(isset($_POST['update'])){
-    // Perhatikan urutan argumen sesuai function update() di model dapur.php kamu:
-    // update($id_dapur, $nama_dapur, $alamat, $penanggung_jawab, $kontak, $id_mitra)
-    $dapur->update(
-        $id, 
-        $_POST['nama_dapur'], 
-        $_POST['alamat'], 
-        $_POST['penanggung_jawab'], 
-        $_POST['kontak'], 
-        $_POST['id_mitra']
-    );
-    header("Location: read.php");
-    exit;
-}
+    if(isset($_POST['update'])){
+        // Perhatikan urutan argumen sesuai function update() di model dapur.php kamu:
+        $dapur->update(
+            $id, 
+            $_POST['nama_dapur'], 
+            $_POST['alamat'], 
+            $_POST['penanggung_jawab'], 
+            $_POST['kontak'], 
+            $_POST['id_mitra']
+        );
+        header("Location: read.php");
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>

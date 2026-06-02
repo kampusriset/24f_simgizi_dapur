@@ -1,26 +1,25 @@
 <?php
-session_start();
+    session_start();
 
-if(!isset($_SESSION['username'])){
-    header("Location: auth/login.php");
-    exit;
-}
+    if(!isset($_SESSION['username'])){
+        header("Location: ../auth/login.php");
+        exit;
+    }
+    require_once '../config/database.php';
+    include '../models/dapur.php';
+    include '../models/mitra.php';
 
-require_once 'config/database.php';
-include 'models/dapur.php';
-include 'models/mitra.php';
+    $db = (new Database())->connect();
+    $dapur = new Dapur($db);
+    $mitra = new Mitra($db);
 
-$db = (new Database())->connect();
-$dapur = new Dapur($db);
-$mitra = new Mitra($db);
+    // Mengambil object mysqli_result
+    $queryDapur = $dapur->tampilDapur();
+    $queryMitra = $mitra->getAll();
 
-// Mengambil object mysqli_result
-$queryDapur = $dapur->tampilDapur();
-$queryMitra = $mitra->getAll();
-
-// Menghitung jumlah baris data menggunakan num_rows bawaan MySQLi
-$totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
-$totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
+    // Menghitung jumlah baris data menggunakan num_rows bawaan MySQLi
+    $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
+    $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
 ?>
 
 <!DOCTYPE html>
@@ -46,6 +45,7 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
 <body>
 
     <div class="d-flex vh-100 overflow-hidden">
+        <!-- SIDEBAR -->
         <aside class="d-flex flex-column p-3 bg-white border-end" style="width: 280px;">
             <div class="card mb-3 shadow-sm border-light rounded-4">
                 <div class="card-body py-3">
@@ -54,32 +54,40 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
             </div>
             <ul class="nav nav-pills flex-column mb-auto gap-2">
                 <li class="nav-item">
-                    <a href="Dashboard.php" class="nav-link active-custom border d-flex align-items-center gap-2 rounded-3">
+                    <a href="dashboard.php" class="nav-link active-custom border d-flex align-items-center gap-2 rounded-3">
                         <i class='bx bx-grid-alt fs-5'></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="dapur/read.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
+                    <a href="../dapur/read.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
                         <i class='bx bx-store-alt fs-5'></i> Data Dapur
                     </a>
                 </li>
-            </ul>
-            <ul class="nav flex-column mt-auto pt-3">
-                <li class="nav-item">
-                    <a href="auth/logout.php" class="nav-link text-danger fw-semibold d-flex align-items-center gap-2" onmouseover="this.classList.add('bg-danger', 'bg-opacity-10', 'rounded-3')" onmouseout="this.classList.remove('bg-danger', 'bg-opacity-10', 'rounded-3')">
-                        <i class='bx bx-log-out fs-5'></i> Logout
-                    </a>
-                </li>
-            </ul>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <li class="nav-item">
+                        <a href="admin.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
+                            <i class='bx bx-user-pin fs-5'></i> Halaman Admin
+                        </a>
+                    </li>
+                <?php endif; ?>
+                </ul>
+                <ul class="nav flex-column mt-auto pt-3">
+                    <li class="nav-item">
+                        <a href="../auth/logout.php" class="nav-link text-danger fw-semibold d-flex align-items-center gap-2" onmouseover="this.classList.add('bg-danger', 'bg-opacity-10', 'rounded-3')" onmouseout="this.classList.remove('bg-danger', 'bg-opacity-10', 'rounded-3')">
+                            <i class='bx bx-log-out fs-5'></i> Logout
+                        </a>
+                    </li>
+                </ul>
         </aside>      
 
+        <!-- MENU DASHBOARD -->
         <main class="flex-grow-1 p-4 overflow-auto">    
             <div class="card mb-4 shadow-sm border-light rounded-4">
                 <div class="card-body py-3">
-                    <p class="mb-0 flex-grow-1 theme-green" style="font-size: 2rem;">Selamat datang, <?= htmlspecialchars($_SESSION['username'] ?? 'User'); ?> </p>
+                    <p class="mb-0 theme-green fw-bold fs-4">Selamat Datang <?= htmlspecialchars($_SESSION['nama'] ?? 'nama'); ?> <?= htmlspecialchars($_SESSION['username'] ?? 'User'); ?> </p>
                 </div>
-            </div>  
-        
+            </div>          
+
             <div class="row g-4 mb-4">
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 h-100 p-2">

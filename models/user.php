@@ -41,5 +41,10 @@
             }
             return false;
         }
+
+        public function getAll() {
+            $query = "SELECT nama, username, role, created_at FROM users ORDER BY created_at DESC";
+            return $this->koneksi->query($query);
+        }
     }
 ?>

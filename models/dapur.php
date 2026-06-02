@@ -44,13 +44,27 @@
         }
 
         // FUNGSI READ
-        public function tampilDapur (){
-            return mysqli_query($this->koneksi, "
-            SELECT dapur.*, mitra.nama_mitra
-            FROM dapur            
-            LEFT JOIN MITRA
-            ON dapur.id_mitra = mitra.id_mitra
-            ");
+        public function tampilDapur ($search = '', $id_mitra = ''){
+            $search = mysqli_real_escape_string($this->koneksi, $search);
+            $id_mitra = mysqli_real_escape_string($this->koneksi, $id_mitra);
+
+            $sql ="SELECT dapur.*, mitra.nama_mitra
+                    FROM dapur            
+                    LEFT JOIN MITRA
+                    ON dapur.id_mitra = mitra.id_mitra
+                    WHERE 1=1";
+
+            if (!empty($search)) {
+                $sql .= " AND dapur.nama_dapur LIKE '%$search%'";
+            }
+
+            if (!empty($id_mitra)) {
+                $sql .= " AND dapur.id_mitra = '$id_mitra'";
+            }
+
+            $sql .= " ORDER BY dapur.nama_dapur ASC";
+
+            return $this->koneksi->query($sql);
         }
 
         // FUNGSI UPDATE

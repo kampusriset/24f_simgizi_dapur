@@ -1,28 +1,28 @@
 <?php
-session_start();
+    session_start();
 
-if(!isset($_SESSION['username'])){
-    header("Location: ../auth/login.php");
-    exit;
-}
+    if(!isset($_SESSION['username'])){
+        header("Location: ../auth/login.php");
+        exit;
+    }
 
-require_once '../config/database.php';
-include '../models/dapur.php';
-include '../models/mitra.php';
+    require_once '../config/database.php';
+    include '../models/dapur.php';
+    include '../models/mitra.php';
 
-$db = (new Database())->connect();
-$dapur = new Dapur($db);
-$mitra = new Mitra($db);
+    $db = (new Database())->connect();
+    $dapur = new Dapur($db);
+    $mitra = new Mitra($db);
 
-// Filter Mitra & Pencarian dari GET Method
-$id_mitra_filter = $_GET['mitra'] ?? '';
-$search = $_GET['search'] ?? '';
+    // Filter Mitra & Pencarian dari GET Method
+    $id_mitra_filter = $_GET['mitra'] ?? '';
+    $search = $_GET['search'] ?? '';
 
-// Ambil data dapur dan mitra sebagai MySQLi Result
-$queryDapur = $dapur->tampilDapur();
-$queryMitra = $mitra->getAll();
+    // Ambil data dapur dan mitra sebagai MySQLi Result
+    $queryDapur = $dapur->tampilDapur($search, $id_mitra_filter);
+    $queryMitra = $mitra->getAll();
 
-$totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
+    $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +36,7 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f4f7fa; }
+        .theme-green { color: #00a859 !important; }
         .nav-link.active-custom { background-color: #e6f6ec !important; color: #00a859 !important; border: 1px solid #bce2ca; }
         .nav-link.hover-custom:hover { background-color: #f0f4f8; }
         .btn-tambah { padding:8px 20px; border-radius:6px; font-weight:600; }
@@ -49,6 +50,7 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
 <body>
 
     <div class="d-flex vh-100 overflow-hidden">
+        <!-- SIDEBAR -->
         <aside class="d-flex flex-column p-3 bg-white border-end" style="width: 280px;">
             <div class="card mb-3 shadow-sm border-light rounded-4">
                 <div class="card-body py-3">
@@ -57,7 +59,7 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
             </div>
             <ul class="nav nav-pills flex-column mb-auto gap-2">
                 <li class="nav-item">
-                    <a href="../Dashboard.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
+                    <a href="../templates/dashboard.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
                         <i class='bx bx-grid-alt fs-5'></i> Dashboard
                     </a>
                 </li>
@@ -66,6 +68,13 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
                         <i class='bx bx-store-alt fs-5'></i> Data Dapur
                     </a>
                 </li>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <li class="nav-item">
+                        <a href="../templates/admin.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
+                            <i class='bx bx-user-pin fs-5'></i> Halaman Admin
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
             <ul class="nav flex-column mt-auto pt-3">
                 <li class="nav-item">
@@ -75,13 +84,13 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
                 </li>
             </ul>
         </aside>
-
-        <main class="flex-grow-1 p-4 overflow-auto">
+        <!-- MENU DATA DAPUR -->
+        <main class="flex-grow-1 p-4 overflow-auto">    
             <div class="card mb-4 shadow-sm border-light rounded-4">
                 <div class="card-body py-3">
-                    <p class="mb-0 text-success fs-4">Selamat datang, <?= htmlspecialchars($_SESSION['username'] ?? 'User'); ?> </p>
+                    <p class="mb-0 theme-green fw-bold fs-4">Selamat Datang <?= htmlspecialchars($_SESSION['nama'] ?? 'Nama'); ?> <?= htmlspecialchars($_SESSION['username'] ?? 'User'); ?> </p>
                 </div>
-            </div>
+            </div> 
 
             <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -99,14 +108,14 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
                     <select name="mitra" class="form-select custom-select" onchange="this.form.submit()">
                         <option value="">Semua Mitra</option>
                         <?php 
-                        if($queryMitra) {
-                            while($m = mysqli_fetch_assoc($queryMitra)){
-                                $sel = ($id_mitra_filter == $m['id_mitra']) ? 'selected' : '';
-                                echo "<option value='{$m['id_mitra']}' {$sel}>{$m['nama_mitra']}</option>";
+                            if($queryMitra) {
+                                while($m = mysqli_fetch_assoc($queryMitra)){
+                                    $sel = ($id_mitra_filter == $m['id_mitra']) ? 'selected' : '';
+                                    echo "<option value='{$m['id_mitra']}' {$sel}>{$m['nama_mitra']}</option>";
+                                }
+                                // Reset pointer agar modal tambah bisa menggunakan query ini lagi
+                                mysqli_data_seek($queryMitra, 0);
                             }
-                            // Reset pointer agar modal tambah bisa menggunakan query ini lagi
-                            mysqli_data_seek($queryMitra, 0);
-                        }
                         ?>
                     </select>
                 </form>
@@ -193,11 +202,11 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
                         <select name="id_mitra" class="form-select custom-input" required>
                             <option value="">Pilih Mitra</option>
                             <?php 
-                            if($queryMitra) {
-                                while($m = mysqli_fetch_assoc($queryMitra)){
-                                    echo "<option value='{$m['id_mitra']}'>{$m['nama_mitra']}</option>";
+                                if($queryMitra) {
+                                    while($m = mysqli_fetch_assoc($queryMitra)){
+                                        echo "<option value='{$m['id_mitra']}'>{$m['nama_mitra']}</option>";
+                                    }
                                 }
-                            }
                             ?>
                         </select>
                     </div>
@@ -229,6 +238,7 @@ $totalDapur = ($queryDapur) ? $queryDapur->num_rows : 0;
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         const tombolHapus = document.querySelectorAll('.btn-hapus');
         const linkKonfirmasiHapus = document.getElementById('link-konfirmasi-hapus');
