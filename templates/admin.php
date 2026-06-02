@@ -45,7 +45,7 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DAPUR MBG - Ruang Admin</title>
-    <link rel="icon" href="/CRUD-DAPUR-MBG/asset/MBG1.png" type="image/png">
+    <link rel="icon" href="../asset/MBG1.png" type="image/png">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -86,7 +86,7 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
                 <div class="card card-custom h-100 p-3">
                     <div class="d-flex justify-content-between align-items-center h-100">
                         <div>
-                            <h5 class="fw-bold mb-1 text-dark">Selamat datang, <?= htmlspecialchars($_SESSION['nama'] ?? 'Admin'); ?></h5>
+                            <h5 class="fw-bold mb-1 text-dark">Selamat datang <?= htmlspecialchars($_SESSION['nama'] ?? 'Admin'); ?></h5>
                             <span class="text-muted small text-capitalize"><?= htmlspecialchars($_SESSION['role'] ?? 'Administrator'); ?></span>
                         </div>
                         <a href="../auth/logout.php" class="btn btn-logout-box d-flex align-items-center justify-content-center rounded-3" style="width: 42px; height: 42px;" title="Logout">
