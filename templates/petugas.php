@@ -1,15 +1,13 @@
 <?php
 session_start();
 
-// Proteksi Login
 if(!isset($_SESSION['username'])){
     header("Location: ../auth/login.php");
     exit;
 }
 
-// Proteksi Khusus Role Admin
-if($_SESSION['role'] !== 'admin'){
-    echo "<script>alert('Akses khusus Administrator!'); window.location.href='../auth/login.php';</script>";
+if($_SESSION['role'] !== 'petugas'){
+    header("Location: ../auth/login.php"); 
     exit;
 }
 
@@ -44,7 +42,7 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAPUR MBG - Ruang Admin</title>
+    <title>DAPUR MBG - Halaman Petugs</title>
     <link rel="icon" href="/CRUD-DAPUR-MBG/asset/MBG1.png" type="image/png">
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -58,11 +56,11 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
         
         .card-custom { border: none; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); background-color: #ffffff; }
         .icon-box { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border-radius: 10px; }
-        
+
         .bg-green-light { background-color: #e6f6ec; color: #00a859; }
         .bg-blue-light { background-color: #e6f0ff; color: #0066ff; }
         .bg-purple-light { background-color: #f3e6ff; color: #9900ff; }
-        
+
         .btn-logout-box { border: 1px solid #c3e6cb; color: #00a859; background: transparent; transition: all 0.2s; }
         .btn-logout-box:hover { background-color: #e6f6ec; color: #008f4c; }
         
@@ -80,14 +78,13 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
                     <h5 class="fw-bold mb-0 theme-green tracking-wide">DAPUR MBG</h5>
                 </div>
             </div>
-
             <!-- Ucapan Selamat Datang Sesuai Role -->
             <div class="col-md-9 col-lg-10">
                 <div class="card card-custom h-100 p-3">
                     <div class="d-flex justify-content-between align-items-center h-100">
                         <div>
-                            <h5 class="fw-bold mb-1 text-dark">Selamat datang, <?= htmlspecialchars($_SESSION['nama'] ?? 'Admin'); ?></h5>
-                            <span class="text-muted small text-capitalize"><?= htmlspecialchars($_SESSION['role'] ?? 'Administrator'); ?></span>
+                            <h5 class="fw-bold mb-1 text-dark">Selamat datang <?= htmlspecialchars($_SESSION['nama'] ?? $_SESSION['username']); ?></h5>
+                            <span class="text-muted small text-capitalize"><?= htmlspecialchars($_SESSION['role']); ?></span>
                         </div>
                         <a href="../auth/logout.php" class="btn btn-logout-box d-flex align-items-center justify-content-center rounded-3" style="width: 42px; height: 42px;" title="Logout">
                             <i class='bx bx-log-out fs-5'></i>
@@ -125,7 +122,7 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
         <div class="card card-custom p-4 mb-4">
             <div class="mb-4">
                 <h3 class="fw-bold text-dark mb-1">Data dapur</h3>
-                <p class="text-secondary small mb-4">Kelola seluruh data dapur mitra</p>
+                <p class="text-secondary small mb-4">Informasi penyedia gizi dan dapur mitra yang terhubung.</p>
                 
                 <form action="" method="GET">
                     <input type="text" name="search" class="form-control search-pill w-100" placeholder="Cari nama dapur" value="<?= htmlspecialchars($search); ?>">
@@ -139,28 +136,30 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
                             <th class="py-3 border-0">Nama Dapur</th>
                             <th class="py-3 border-0">Alamat</th>
                             <th class="py-3 border-0">Penanggung Jawab</th>
-                            <th class="py-3 border-0">Kontak</th>
+                            <th class="py-3 border-0">Kontak Dapur</th>
                             <th class="py-3 border-0">Mitra</th>
                         </tr>
                     </thead>
-                    <!-- Table untuk Menampilkan Data Dapur-->
+                    <!-- Table Untuk Menampilkan Data -->
                     <tbody class="border-top-0" style="font-size: 0.95rem;">
-                        <?php if($totalDapur > 0 && $queryDapur): ?>
+                        <?php if ($totalDapur > 0 && $queryDapur): ?>
                             <?php while($row = mysqli_fetch_assoc($queryDapur)): ?>
-                                <tr class="border-bottom text-secondary">
-                                    <td class="py-3 text-dark fw-medium"><?= htmlspecialchars($row['nama_dapur'] ?? '-'); ?></td>
-                                    <td class="py-3"><?= htmlspecialchars($row['alamat'] ?? '-'); ?></td>
-                                    <td class="py-3"><?= htmlspecialchars($row['penanggung_jawab'] ?? '-'); ?></td>
-                                    <td class="py-3"><?= htmlspecialchars($row['kontak'] ?? '-'); ?></td>
-                                    <td class="py-3">
-                                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-medium">
-                                            <?= htmlspecialchars($row['nama_mitra'] ?? 'Data Mitra'); ?>
-                                        </span>
-                                    </td>
-                                </tr>
+                            <tr class="border-bottom text-secondary">
+                                <td class="py-3 text-dark fw-medium"><?= htmlspecialchars($row['nama_dapur']); ?></td>
+                                <td class="py-3"><?= htmlspecialchars($row['alamat'] ?? '-'); ?></td>
+                                <td class="py-3"><?= htmlspecialchars($row['penanggung_jawab'] ?? '-'); ?></td>
+                                <td class="py-3"><?= htmlspecialchars($row['kontak'] ?? '-'); ?></td>
+                                <td class="py-3">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-medium">
+                                        <?= htmlspecialchars($row['nama_mitra'] ?? 'Tidak Ada'); ?>
+                                    </span>
+                                </td>
+                            </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" class="text-center py-4 text-muted">Belum ada data dapur.</td></tr>
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Belum ada data dapur yang tersedia untuk sekolah.</td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -168,58 +167,6 @@ $totalMitra = ($queryMitra) ? $queryMitra->num_rows : 0;
             
             <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                 <small class="text-muted">Menampilkan <?= $totalDapur; ?> data</small>
-                <div class="btn-group border rounded-2 shadow-sm">
-                    <button class="btn btn-sm btn-light border-end px-3 text-muted">&lt;</button>
-                    <button class="btn btn-sm bg-theme-green text-white px-3">1</button>
-                    <button class="btn btn-sm btn-light border-start px-3 text-muted">&gt;</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Table untuk Menampilkan Data User -->
-        <div class="card card-custom p-4">
-            <div class="mb-4">
-                <h3 class="fw-bold text-dark mb-1">Manajemen Pengguna</h3>
-                <p class="text-secondary small">Daftar akun pengguna yang terdaftar di sistem</p>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr class="text-dark fw-bold border-bottom" style="font-size: 0.9rem;">
-                            <th class="py-3 border-0">Nama Lengkap</th>
-                            <th class="py-3 border-0">Username</th>
-                            <th class="py-3 border-0">Role</th>
-                            <th class="py-3 border-0">Waktu Terdaftar</th>
-                        </tr>
-                    </thead>
-                    <tbody class="border-top-0" style="font-size: 0.95rem;">
-                        <?php if($totalUser > 0 && $queryUser): ?>
-                            <?php mysqli_data_seek($queryUser, 0); ?> 
-                            <?php while($row = mysqli_fetch_assoc($queryUser)): ?>
-                            <tr class="border-bottom text-secondary">
-                                <td class="py-3 text-dark fw-medium"><?= htmlspecialchars($row['nama_lengkap'] ?? $row['nama']); ?></td>
-                                <td class="py-3"><?= htmlspecialchars($row['username']); ?></td>
-                                <td class="py-3">
-                                    <?php 
-                                        $bColor = 'bg-primary text-primary';
-                                        if (strtolower($row['role']) === 'admin') $bColor = 'bg-danger text-danger';
-                                        if (strtolower($row['role']) === 'petugas') $bColor = 'bg-info text-info';
-                                    ?>
-                                    <span class="badge <?= $bColor; ?> bg-opacity-10 rounded-pill px-3 py-2 text-uppercase fw-semibold">
-                                        <?= htmlspecialchars($row['role']); ?>
-                                    </span>
-                                </td>
-                                <td class="py-3 text-muted">
-                                    <?= date('d M Y, H:i', strtotime($row['created_at'] ?? date('Y-m-d H:i:s'))); ?> WIB
-                                </td>
-                            </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr><td colspan="4" class="text-center py-4 text-muted">Belum ada data user.</td></tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
             </div>
         </div>
 

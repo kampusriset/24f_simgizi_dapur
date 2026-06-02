@@ -31,6 +31,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DAPUR MBG - Data Dapur</title>
+    <link rel="icon" href="/CRUD-DAPUR-MBG/asset/MBG1.png" type="image/png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -68,13 +70,6 @@
                         <i class='bx bx-store-alt fs-5'></i> Data Dapur
                     </a>
                 </li>
-                <?php if ($_SESSION['role'] === 'admin'): ?>
-                    <li class="nav-item">
-                        <a href="../templates/admin.php" class="nav-link text-secondary border border-light-subtle d-flex align-items-center gap-2 hover-custom rounded-3">
-                            <i class='bx bx-user-pin fs-5'></i> Halaman Admin
-                        </a>
-                    </li>
-                <?php endif; ?>
             </ul>
             <ul class="nav flex-column mt-auto pt-3">
                 <li class="nav-item">
@@ -84,6 +79,7 @@
                 </li>
             </ul>
         </aside>
+
         <!-- MENU DATA DAPUR -->
         <main class="flex-grow-1 p-4 overflow-auto">    
             <div class="card mb-4 shadow-sm border-light rounded-4">
@@ -113,7 +109,6 @@
                                     $sel = ($id_mitra_filter == $m['id_mitra']) ? 'selected' : '';
                                     echo "<option value='{$m['id_mitra']}' {$sel}>{$m['nama_mitra']}</option>";
                                 }
-                                // Reset pointer agar modal tambah bisa menggunakan query ini lagi
                                 mysqli_data_seek($queryMitra, 0);
                             }
                         ?>

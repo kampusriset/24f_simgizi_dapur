@@ -27,6 +27,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Register MBG</title>
+    <link rel="icon" href="/CRUD-DAPUR-MBG/asset/MBG1.png" type="image/png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
@@ -41,7 +43,7 @@
                 <option value="admin">Admin</option>
                 <option value="petugas">Petugas</option>
                 <option value="dapur">Dapur</option>
-                <option value="">Sekolah</option>
+                <option value="sekolah">Sekolah</option>
             </select>
             <button class="btn btn-primary w-100" name="register">Register</button>
         </form>
