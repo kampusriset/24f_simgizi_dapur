@@ -48,13 +48,13 @@
         }
 
         public function cekUsername($username) {
-            $query = "SELECT * FROM users WHERE username = 'username'";
+            $query = "SELECT * FROM users WHERE username = '$username'";
             $result = $this->koneksi->query($query);
             return $result->num_rows > 0;
         }
 
         public function resetPass ($username, $newPass) {
-            $password_hash = password_hash($password_hash, PASSWORD_BCRYPT);
+            $password_hash = password_hash($newPass, PASSWORD_BCRYPT);
 
             $query = "UPDATE users SET password = '$password_hash' WHERE username = '$username'";
             return $this->koneksi->query($query);

@@ -7,23 +7,23 @@
     $error = '';
     $success = '';
 
-    if(isset($_POST['submit'])) {
+    if(isset($_POST['reset'])) {
         $db = (new Database())->connect();
         $userModel = new User($db);
 
         $username = $_POST['username'];
-        $newPass = $_POST['new_password'];
-        $konfirmasi = $_POST['konfirmasi_password'];
+        $newPass = $_POST['newpass'];
+        $konfirmasi = $_POST['confpass'];
 
         if (!$userModel->cekUsername($username)) {
             $error = "Username tidak terdaftar di sistem!";
         } elseif ($newPass !== $konfirmasi) {
             $error = "Konfirmasi password tidak cocok!";
         } else {
-            if (!$userModel->resetPass($username, $newPass)) {
-                $success = "Password berhasil direset! SIlahkan login kembali.";
+            if ($userModel->resetPass($username, $newPass)) {
+                $success = "Password berhasil direset! Silakan login kembali.";
             } else {
-                $error = "Password berhasil direset! SIlahkan login kembali.";
+                $error = "Gagal mereset password. Terjadi kesalahan pada sistem.";
             }
         }
     }
@@ -43,17 +43,19 @@
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4 shadow-sm" style="width:350px;border-radius:20px;">
         <h4 class="fw-bold mb-3 text-center">Lupa Password</h4>
+        
         <?php if($error !== "") : ?>
             <div class="alert alert-danger py-2 text-center" style="font-size: 0.9rem;">
                 <?= $error; ?>
             </div>
         <?php endif; ?>
 
-        <?php if($success != "") : ?>
-            <div class="alert alert-info">
+        <?php if($success !== "") : ?>
+            <div class="alert alert-success py-2 text-center" style="font-size: 0.9rem;">
                 <?= $success; ?>
             </div>
         <?php endif; ?>
+        
         <form method="POST">
             <input type="text"
                     name="username"
@@ -75,12 +77,12 @@
 
             <button type="submit"
                     name="reset"
-                    class="btn btn-warning w-100">
+                    class="btn btn-warning w-100 fw-semibold">
                 Reset Password
             </button>
 
         </form>
-        <a href="login.php" class="text-center mt-3 d-block">
+        <a href="login.php" class="text-center mt-3 d-block text-decoration-none">
             Kembali ke Login
         </a>
     </div>
