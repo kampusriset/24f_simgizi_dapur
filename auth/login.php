@@ -81,7 +81,7 @@
         </form>
 
         <a href="register.php" class="text-center mt-3 d-block">
-            Register jika belum memiliki akun
+            Register jika belum memiliki akun!!!
         </a>
     </div>
 </body>
